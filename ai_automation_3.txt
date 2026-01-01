@@ -1,0 +1,62 @@
+##########
+login page
+##########
+
+# user id
+
+Point(x=636, y=592)
+
+# password
+
+Point(x=645, y=634)
+
+##########
+Home page
+##########
+
+# solution -- to select FINCORE
+
+Point(x=846, y=167)
+
+# menu shortcut
+
+Point(x=1324, y=237)
+
+
+##################
+CRDOAAC first page
+##################
+
+# CIF ID *
+# CIF ID *
+
+Point(x=822, y=328)
+
+# Scheme Code *
+
+Point(x=47, y=420)
+
+# Account Holder
+
+Point(x=833, y=462)
+
+tab(1), enter
+
+# Authentication Mode *
+
+pg.click(x=69, y=498, clicks=3), pg.hotkey('ctrl', 'c')
+
+
+# Submit button - GO or F4
+
+
+
+################
+CRDOAAC 2nd page
+################
+
+
+# General
+
+pg.click(x=61, y=429, clicks=3)
+
