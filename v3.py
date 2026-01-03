@@ -13,12 +13,21 @@ DISPLAY_SIZE = pg.size()
 DIFF_X = DISPLAY_SIZE[0] / ORG_SIZE[0]
 DIFF_Y = DISPLAY_SIZE[1] / ORG_SIZE[1]
 
+logging.basicConfig(
+    filename='automation.log',
+    level=logging.INFO,
+    format='%(asctime)s :: %(levelname)s :: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+
 def key_fill(*args) -> None:
-    """Types the given arguments using pyautogui."""
+    
+    # Types the given arguments using pyautogui."""
     pg.write(*args)
 
 def copy(x_axis: int = 0, y_axis: int = 0, clicks: int = 3) -> str:
-    """Copies text from the specified screen coordinates."""
+
+    # Copies text from the specified screen coordinates."""
 
     pg.click(x=x_axis, y=y_axis, clicks=clicks)
     sleep(0.5)  # Wait for the click action to register
@@ -26,16 +35,23 @@ def copy(x_axis: int = 0, y_axis: int = 0, clicks: int = 3) -> str:
     sleep(0.5)  # Wait for clipboard to update
     return copied_text
 
+# Presses the tab key a specified number of times with an interval."""
+
 def tab(times: int = 1, interval: float = 0.3) -> None:
-    """Presses the tab key a specified number of times with an interval."""
+
     pg.press(keys='tab', presses=times, interval=interval)
 
+
+# Presses the space key a specified number of times with an interval."""
+
 def space(times: int = 1, interval: float = 0.3) -> None:
-    """Presses the space key a specified number of times with an interval."""
+
     pg.press(keys='space', presses=times, interval=interval)
 
+
+# Verifies if the expected field is present on the screen."""
+
 def verify_field(expected_field: str = None, x_axis: int = 0, y_axis: int = 0) -> bool:
-    """Verifies if the expected field is present on the screen."""
     if expected_field is None:
         raise ValueError("Expected field must be provided.")
         pg.alert(text="Expected field must be provided.", title="Error", button="OK")
@@ -45,19 +61,23 @@ def verify_field(expected_field: str = None, x_axis: int = 0, y_axis: int = 0) -
         logging.error(f"""Field verification failed. 
                       Expected: \"{expected_field}\" at ({x_axis}, {y_axis}) 
                       but the field is \"{field}\".""")
-        pg.alert(text=f"""Field verification failed. 
+        pg.confirm(text=f"""Field verification failed. 
                       Expected: \"{expected_field}\" at ({x_axis}, {y_axis}) 
                       but the field is \"{field}\".""",
-                 title="Error", button=f"{field}")
+                    title="Error",
+                    buttons=("OK", "Cancel"))
         return False
     return True
     
 
 def login_page(username: str = None, password: str = None) -> None:
+
+    """Automates the login process by entering username and password."""
+
     if username is None or password is None:
+
         raise ValueError("Username and password must be provided.")
     
-    """Automates the login process by entering username and password."""
 
     userid_org_coord = (636, 592)
     password_org_coord = (645, 634)
@@ -69,12 +89,16 @@ def login_page(username: str = None, password: str = None) -> None:
     pwd_coord = (int(password_org_coord[0] * DIFF_X), 
                  int(password_org_coord[1] * DIFF_Y))
 
+
     # Verify and fill User ID field
     if not verify_field(expected_field="User ID", x_axis=uid_coord[0], y_axis=uid_coord[1]):
-        raise ValueError("User ID field: Wrong Coordinates.")
+
         pg.alert(text="User ID field: Wrong Coordinates given.", title="Error", button="OK")
         logging.error(f"{get_timestamp()} :: User ID field: Wrong Coordinates given.")
+        raise ValueError("User ID field: Wrong Coordinates.")
+    
     else:
+
         # To move to username entry field
         tab()
         key_fill(username)
@@ -83,10 +107,13 @@ def login_page(username: str = None, password: str = None) -> None:
 
     # Verify and fill Password field
     if not verify_field(expected_field="Password", x_axis=pwd_coord[0], y_axis=pwd_coord[1]):
+
         raise ValueError("Password field: Wrong Coordinates.")
         pg.alert(text="Password field: Wrong Coordinates given.", title="Error", button="OK")
         logging.error(f"{get_timestamp()} :: Password field: Wrong Coordinates given.")
+    
     else:
+        
         # To move to password entry field
         tab()
         key_fill(password)
@@ -95,6 +122,8 @@ def login_page(username: str = None, password: str = None) -> None:
     
     # Press Enter to submit the login form
     pg.press('enter')
+    pg.prompt(text="Login process completed.", title="Info", button="OK", timeout=5)
+    logging.info(f"{get_timestamp()} :: Login process completed.")
 
 
 def get_timestamp(fmt: str = "%Y-%m-%d_%H:%M:%S") -> str:
@@ -118,4 +147,7 @@ def save_screenshot(prefix: str = "screenshot", folder: str = ".", fmt: str = "%
     logging.info(f"Saved screenshot: {path}")
     return path
 
-login_page(username="testuser", password="testpass")
+
+if __name__ == "__main__":
+    login_page(username="testuser", password="testpass")
+
